@@ -19,6 +19,14 @@ module DomainToolsResponse
       @request.content
     end           
     
+    def to_xml
+      return to_s if @request.format == "xml"
+    end
+
+    def to_json
+      return to_s if @request.format == "json"
+    end
+    
     def to_yaml
       parse unless @parsed_object
       @parsed_object.to_yaml
