@@ -62,11 +62,8 @@ module  DomainToolsRequest
     
     def error_message
       return nil unless @error
-      "[#{@error[:code]}] #{@error[:message]}"
-    end
-    
-    # -----------------------------------------------------------------------
-    # -----------------------------------------------------------------------
+      "[#{@error["code"]}] #{@error["message"]}"
+    end                                                                      
     
     # build service url
     def build_url                 
@@ -102,7 +99,7 @@ module  DomainToolsRequest
           req = Net::HTTP::Get.new(@url)
           # Requesting
           @response = http.request(req)       
-          @done = validate_http_status     
+          @success = validate_http_status     
           return finalize
         end
       rescue DomainTools::ServiceException => e
@@ -125,7 +122,8 @@ module  DomainToolsRequest
       DomainToolsExceptions::raise_by_code(@response.code)
     end   
        
-    def finalize
+    def finalize                           
+      @done = true
       DomainTools::Response.new(self.clone)
     end
     

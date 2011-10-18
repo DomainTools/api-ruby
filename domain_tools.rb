@@ -50,7 +50,11 @@ module DomainTools
   def self.length
     return @requests.length if @requests
     0
-  end              
+  end     
+  
+  def self.[](key)
+    (self.do)[key]
+  end
   
   # Authentication of the user       
   # can be set with a hash {:username,:password} as one param

@@ -7,10 +7,6 @@ module DomainToolsXmlParser
       root_node = doc.elements.first
       data_node = root_node.elements.first
       hash = self.parse_node({},data_node)
-      puts "------------------------------------------------"
-      puts hash.inspect                                      
-      puts "------------------------------------------------"
-      hash  
     end  
     
     def self.parse_node(hash,node)
