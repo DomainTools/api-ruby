@@ -53,17 +53,17 @@ module  DomainToolsRequest
     end
     
     def error?
-      return @error.nil?
+      return !@error.nil?
     end
     
     def success?
-      return @error.nil? && @response && @response.body    
+      return @error.nil? && @http && @http.body    
     end
-    
-    def error_message
-      return nil unless @error
-      "[#{@error["code"]}] #{@error["message"]}"
-    end                                                                      
+                                                
+    def [](key)
+      self.do unless done? 
+      @response[key]
+    end
     
     # build service url
     def build_url                 
@@ -91,46 +91,61 @@ module  DomainToolsRequest
     
     
     # Connect to the server and execute the request
-    def do
+    def do       
       validate     
-      build_url    
+      build_url                         
+      @done = true
+      DomainTools.new!
       begin
         Net::HTTP.start(@host) do |http|
           req = Net::HTTP::Get.new(@url)
           # Requesting
-          @response = http.request(req)       
+          @http = http.request(req)       
           @success = validate_http_status     
           return finalize
         end
-      rescue DomainTools::ServiceException => e
-        get_error                                                
-        raise e.class.new error_message
+      rescue DomainTools::ServiceException => e                               
+        @error = DomainTools::Error.new(self,e)
+        raise e.class.new(e)
       end
     end
       
-    def get_error
-      if @format=="xml"
-        @error = DomainTools::ErrorParser.from_xml(@response.body)
-      else
-        @error = DomainTools::ErrorParser.from_json(@response.body)
-      end                                                          
+    def error
+      @error ? @error : nil
     end
        
     # Check HTTP request status and raise an exception if needed
     def validate_http_status    
-      return true if @response.code.to_i == 200
-      DomainToolsExceptions::raise_by_code(@response.code)
+      return true if @http.code.to_i == 200
+      DomainToolsExceptions::raise_by_code(@http.code)
     end   
        
     def finalize                           
-      @done = true
-      DomainTools::Response.new(self.clone)
+      @response = DomainTools::Response.new(self.clone)
     end
     
     def content
-      return @response.body if @response.body
+      return @http.body if @http.body
       self.inspect
     end
+           
+    def to_json
+      return @response.to_json if @response
+      @format = "json"
+      self.do
+    end
+    
+    def to_xml
+      return @response.to_xml if @response
+      @format = "xml"
+      self.do
+    end
+    
+    def to_yaml
+      return @response.to_yaml if @response
+      nil
+    end
+    
     
   end
 end

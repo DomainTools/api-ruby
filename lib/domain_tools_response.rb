@@ -34,7 +34,7 @@ module DomainToolsResponse
     end
     
     def to_yaml
-      parse unless @parsed_object
+      @parsed_object = parse unless @parsed_object
       @parsed_object.to_yaml
     end
     
