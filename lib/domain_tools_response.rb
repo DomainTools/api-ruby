@@ -18,21 +18,33 @@ module DomainToolsResponse
     def to_s
       @request.content
     end           
-    
+                                                 
+    # Return XML with parsed object (no new request made)
+    def to_xml!
+      @parsed_object = parse unless @parsed_object
+      @parsed_object.to_xml({:root => 'whoisapi'})
+    end             
+
+    # Execute the same request and return an XML response with a NEW request    
     def to_xml
-      return to_s if @request.format == "xml"
       @request.clone.to_xml
     end
+               
+    # Return JSON with parsed object (no new request made)
+    def to_json!
+      @parsed_object = parse unless @parsed_object
+      @parsed_object.to_json
+    end        
 
+    # Execute the same request and return a JSON response with a NEW request
     def to_json
-      return to_s if @request.format == "json"
       @request.clone.to_json
     end
     
     def to_yaml
       @parsed_object = parse unless @parsed_object
       @parsed_object.to_yaml
-    end
+    end        
     
     def [](key)
       @parsed_object = parse unless @parsed_object

@@ -64,7 +64,7 @@ module  DomainToolsRequest
       validate     
       build_url                         
       @done = true
-      DomainTools.new!
+      DomainTools.counter!
       begin
         Net::HTTP.start(@host) do |http|
           req = Net::HTTP::Get.new(@url)
@@ -96,6 +96,11 @@ module  DomainToolsRequest
     def content
       return @http.body if @http.body
       self.inspect
+    end   
+    
+    def to_s
+      return @response.to_s if @response
+      self.do.to_s
     end
            
     def to_json

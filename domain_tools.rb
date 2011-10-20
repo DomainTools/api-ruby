@@ -67,34 +67,37 @@ module DomainTools
   def self.for(query)    
     self.set_data :query, query
   end
-                     
-    
-    
-    
-    
     
   # check first, raise exception if needed, execute the HTTP request
   def self.do
     @request = DomainToolsRequest::Request.new @data
     @request.do
   end                                              
-                                                    
+  
+  
+  
+  
+  
+  
+  
   def self.request
+    @request = DomainToolsRequest::Request.new @data unless @request
     @request
   end
             
-  def self.new!
-    @counter = 0 unless @counter
-    @counter+=1
-  end       
   
   def self.counter
     return 0 unless @counter
     @counter
   end
+  
+  def self.counter!
+    @counter = 0 unless @counter
+    @counter+=1
+  end
 
   def self.[](key)
-    return nil unless @request
+    self.do unless self.done?
     @request[key]
   end
   
@@ -111,7 +114,42 @@ module DomainTools
   def self.to_yaml
     return nil unless @request
     @request.to_yaml
-  end      
+  end          
+  
+  
+  # Request aliases
+  
+  def self.done?
+    self.request && self.request.done?
+  end
+  
+  def self.error?
+   self.request &&  self.request.error?
+  end
+  
+  def self.success?
+    self.request &&  self.request.success?
+  end  
+  
+  def self.to_s
+    return self.request.to_s &&  self.request
+    to_s
+  end
+  
+  def self.to_json
+    return self.request.to_json &&  self.request
+    to_json
+  end
+  
+  def self.to_xml
+    return self.request.to_xml &&  self.request
+    to_xml
+  end
+  
+  def self.to_yaml
+    return self.request.to_yaml &&  self.request
+    to_yaml
+  end
   
   
   private
