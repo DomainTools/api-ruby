@@ -109,10 +109,20 @@ module  DomainToolsRequest
       self.do
     end
     
+    def to_json!
+      return @response.to_json! if @response
+      self.do.to_json!
+    end
+    
     def to_xml
       return @response.to_xml if @response
       @format = "xml"
       self.do
+    end     
+    
+    def to_xml!
+      return @response.to_xml! if @response
+      self.do.to_xml!
     end
     
     def to_yaml

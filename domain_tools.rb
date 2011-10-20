@@ -132,22 +132,32 @@ module DomainTools
   end  
   
   def self.to_s
-    return self.request.to_s &&  self.request
+    return self.request.to_s if self.request
     to_s
   end
   
   def self.to_json
-    return self.request.to_json &&  self.request
+    return self.request.to_json if  self.request
+    to_json
+  end
+  
+  def self.to_json!
+    return self.request.to_json! if  self.request
     to_json
   end
   
   def self.to_xml
-    return self.request.to_xml &&  self.request
+    return self.request.to_xml if  self.request
     to_xml
-  end
+  end 
+    
+  def self.to_xml! 
+    return self.request.to_xml! if  self.request
+    to_xml                     
+  end 
   
   def self.to_yaml
-    return self.request.to_yaml &&  self.request
+    return self.request.to_yaml if  self.request
     to_yaml
   end
   
