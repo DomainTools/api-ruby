@@ -13,6 +13,14 @@ module DomainToolsResponse
     
     def content
       request.content
+    end      
+    
+    def response
+      self.do
+    end
+    
+    def do
+      self
     end
     
     def to_s

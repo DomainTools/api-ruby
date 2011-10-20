@@ -67,8 +67,7 @@ module  DomainToolsRequest
       DomainTools.counter!
       begin
         Net::HTTP.start(@host) do |http|
-          req = Net::HTTP::Get.new(@url)
-          # Requesting
+          req = Net::HTTP::Get.new(@url)          
           @http = http.request(req)       
           @success = validate_http_status     
           return finalize
@@ -77,6 +76,10 @@ module  DomainToolsRequest
         @error = DomainTools::Error.new(self,e)
         raise e.class.new(e)
       end
+    end  
+    
+    def response
+      self.do
     end
       
     def error
@@ -97,6 +100,8 @@ module  DomainToolsRequest
       return @http.body if @http.body
       self.inspect
     end   
+
+    # Response aliases
     
     def to_s
       return @response.to_s if @response
