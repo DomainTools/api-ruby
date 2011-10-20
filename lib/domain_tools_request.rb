@@ -1,52 +1,21 @@
 module  DomainToolsRequest
   class Request
-                
-    def credentials=(credentials)
-      return false unless credentials.kind_of? Hash
-      @username  = credentials[:username]
-      @key       = credentials[:key]
+
+    def initialize(data)
+       @username  = data[:username] if data[:username]
+       @key       = data[:key]      if data[:key]               
+       @domain    = data[:domain]   if data[:domain]
+       @service   = data[:service]  if data[:service]
+       @options   = data[:options]  if data[:options]
+       @format    = data[:format]   if data[:format]
+       @host      = data[:host]     if data[:host]
+       @port      = data[:port]     if data[:port]
+       @version   = data[:version]  if data[:version]
     end
-      
-    def username=(username)
-      @username = username
-    end
-    
-    def key=(key)
-      @key = key
-    end    
-    
-    def domain=(domain)
-      @domain = domain
-    end
-    
-    def service=(service)
-      @service = service
-    end
-    
-    def options=(options)
-      @options = options
-      @options = self.vars_hash_to_string(@options) if @options.kind_of? Hash
-    end
-    
-    def version=(version)
-      @version = version
-    end
-    
-    def host=(host)
-      @host = host
-    end    
-    
-    def port=(port)
-      @port = port
-    end  
                   
     def format
       @format
-    end      
-    
-    def format=(format)
-      @format = format
-    end
+    end       
     
     def done?
       return @done

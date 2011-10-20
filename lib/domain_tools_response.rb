@@ -21,16 +21,12 @@ module DomainToolsResponse
     
     def to_xml
       return to_s if @request.format == "xml"
-      tmp = @request.clone
-      tmp.format = 'xml'
-      tmp.do
+      @request.clone.to_xml
     end
 
     def to_json
       return to_s if @request.format == "json"
-      tmp = @request.clone
-      tmp.format = 'json'
-      tmp.do
+      @request.clone.to_json
     end
     
     def to_yaml
