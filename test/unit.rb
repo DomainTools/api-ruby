@@ -26,6 +26,7 @@ end
 
 class UnitTestDomainTools < Test::Unit::TestCase
   
+  
   VALID_SETTINGS = {
     :username   => "username",
     :key        => "key",
@@ -37,7 +38,6 @@ class UnitTestDomainTools < Test::Unit::TestCase
 
   # Exceptions tests
   # ---------------------------------------------------------------
-  
   def test_raise_no_settings_exception
     DomainTools.clear
     assert_raises DomainTools::NoSettingsException do
@@ -45,10 +45,13 @@ class UnitTestDomainTools < Test::Unit::TestCase
     end
   end
   
-  def test_raise_no_domain_exception  
-    DomainTools.clear
+  def test_raise_no_domain_exception_if_no_params
+    DomainTools.clear             
+    settings = VALID_SETTINGS.clone
+    settings.delete(:domain)
+    request = DomainTools::clear::with(settings).request
     assert_raises DomainTools::NoDomainException do
-      DomainTools::get("whois").request.do
+      request.do
     end
   end
   
@@ -60,9 +63,31 @@ class UnitTestDomainTools < Test::Unit::TestCase
     end               
   end
   
+  def test_nothing_raised_if_query_specified
+    DomainTools.clear             
+    settings = VALID_SETTINGS.clone
+    settings.delete(:domain)
+    settings[:query] = {"query" => "domain tools"}
+    request = DomainTools::clear::with(settings).request
+    assert_nothing_raised do
+      request.do
+    end
+  end
+  
+  def test_nothing_raised_if_parameters_specified
+    DomainTools.clear             
+    settings = VALID_SETTINGS.clone
+    settings.delete(:domain)
+    settings[:parameters] = {"terms" => "DomainTools LLC|Seattle"}
+    request = DomainTools::clear::with(settings).request
+    assert_nothing_raised do
+      request.do
+    end
+  end
+  
+  
   # Classes tests
   # ---------------------------------------------------------------
-
   def test_module_class
     assert_equal DomainTools.class, Module
   end
@@ -95,5 +120,44 @@ class UnitTestDomainTools < Test::Unit::TestCase
       request.response["response"] # force parsing
     end
   end
+  
+  # Formats tests
+  # ---------------------------------------------------------------
+  def test_format_as_xml
+    request = DomainTools::clear::with(VALID_SETTINGS).request
+    request.format = "xml"
+    request.do
+    assert_equal request.format, "xml"
+  end
+  
+  def test_format_as_json
+    request = DomainTools::clear::with(VALID_SETTINGS).request
+    request.format = "json"
+    request.do
+    assert_equal request.format, "json"
+  end
+  
+  def test_format_as_html
+    request = DomainTools::clear::with(VALID_SETTINGS).request
+    request.format = "html"
+    request.do
+    assert_equal request.format, "html"
+  end
+  
+  def test_format_default_fallback_as_json
+    request = DomainTools::clear::with(VALID_SETTINGS).request
+    request.do
+    assert_equal request.format, "json"
+  end
+
+  def test_format_invalid_fallback_as_json
+    request = DomainTools::clear::with(VALID_SETTINGS).request
+    request.format = "notavalidformat"
+    request.do
+    assert_equal request.format, "json"
+  end
+
+  # Formats tests
+  # ---------------------------------------------------------------
 
 end
