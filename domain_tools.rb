@@ -1,5 +1,5 @@
 module DomainTools              
-  unloadable # development, to avoid reloading server at each change...
+  # unloadable # development, to avoid reloading server at each change...
   require 'net/http'
     
   include DomainToolsUtil
@@ -33,6 +33,12 @@ module DomainTools
       self.set_data :username,  credentials
       self.set_data :key,       key
     end
+    self
+  end      
+  
+  def self.clear
+    @data = {}
+    @request = nil
     self
   end
   
@@ -84,9 +90,6 @@ module DomainTools
     raise DomainTools::NoSettingsException unless @request
     @request
   end
-  
-
-       
   
   def self.counter
     return 0 unless @counter
@@ -143,8 +146,7 @@ module DomainTools
   
   def self.to_yaml
     self.request.to_yaml
-  end
-  
+  end         
   
   private
   
@@ -154,7 +156,6 @@ module DomainTools
     # Update data for future request
     @request = DomainToolsRequest::Request.new @data
     self
-  end
-  
+  end         
   
 end

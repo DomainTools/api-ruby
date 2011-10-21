@@ -2,6 +2,7 @@ module DomainToolsExceptions
   
   class ServiceException                < StandardError;    end  
   class NoSettingsException             < ServiceException; end
+  class NoCredentialsException          < ServiceException; end
   class BadRequestException             < ServiceException; end
   class NotAuthorizedException          < ServiceException; end
   class NotFoundException               < ServiceException; end

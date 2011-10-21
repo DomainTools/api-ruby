@@ -2,7 +2,8 @@ module DomainToolsJsonParser
   class JSONParser          
                   
     def self.parse(source)
-      ActiveSupport::JSON.decode(source)
+      require('json')
+      JSON.parse(source)
     end
     
   end

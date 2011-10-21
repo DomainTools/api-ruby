@@ -41,22 +41,22 @@ module  DomainToolsRequest
       parts << "&query=#{@query}"     if @query              
       parts << "#{@options}"          if @options
       @url = parts.join("")                      
-      puts @url
-      @url
     end
     
     def authentication_params(uri)                                      
       return "&api_username=#{@username}&api_key=#{@key}" unless @signed
       timestamp = Time.now.utc.strftime("%Y-%m-%dT%H:%M:%SZ")
       data      = @username+timestamp+uri                                             
+      require 'openssl'
       digester  = OpenSSL::Digest::Digest.new(DomainTools::DIGEST)
       signature = OpenSSL::HMAC.hexdigest(digester, @key, data)
       ["api_username=#{@username}","signature=#{signature}","timestamp=#{timestamp}"].join("&")
     end
     
     
-    def validate                                              
+    def validate
       raise DomainTools::NoDomainException unless @domain || @query
+      raise DomainTools::NoCredentialsException unless @username || @key
       # must be a valid format (will be default FORMAT constant if empty or wrong)
       @format       = DomainTools::FORMAT     if @format!="json" && @format!="xml" && @format != "html"
       # if not already defined, use default
@@ -79,10 +79,7 @@ module  DomainToolsRequest
       return @response if @response && !refresh       
       validate     
       build_url                         
-      @done = true      
-      puts "----------------------------------------------------------------------"
-      puts @host+@url 
-      puts "----------------------------------------------------------------------"      
+      @done = true
       DomainTools.counter!
       begin
         Net::HTTP.start(@host) do |http|
