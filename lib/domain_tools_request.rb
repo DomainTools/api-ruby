@@ -1,6 +1,6 @@
 module  DomainToolsRequest
   class Request
-    attr_accessor :domain, :format, :service
+    attr_accessor :domain, :format, :service, :query, :parameters
 
     def initialize(data)
       data.each{|key, value| set_data(key,value)}
@@ -39,7 +39,7 @@ module  DomainToolsRequest
       parts << "format=#{@format}"
       parts << "&#{authentication_params(uri)}"
       parts << "&query=#{@query}"     if @query              
-      parts << "#{@options}"          if @options
+      parts << "#{format_parameters}" if @parameters
       @url = parts.join("")                      
     end
     
@@ -55,7 +55,7 @@ module  DomainToolsRequest
     
     
     def validate
-      raise DomainTools::NoDomainException unless @domain || @query
+      raise DomainTools::NoDomainException unless @domain || @query || @parameters
       raise DomainTools::NoCredentialsException unless @username || @key
       # must be a valid format (will be default FORMAT constant if empty or wrong)
       @format       = DomainTools::FORMAT     if @format!="json" && @format!="xml" && @format != "html"
@@ -159,6 +159,12 @@ module  DomainToolsRequest
     
     def set_data(key,val)
       eval("@#{key.to_s} = val")
+    end
+    
+    def format_parameters
+      return @parameters if @parameters.kind_of? String
+      return DomainTools::Util.vars_hash_to_string(@parameters) if @parameters.kind_of? Hash
+      ""
     end
     
   end

@@ -56,9 +56,9 @@ module DomainTools
     self.set_data :format, format
   end
   
-  # to specify options to the service
-  def self.where(options)
-    self.set_data :options, options
+  # to specify parameters to the service
+  def self.where(parameters)
+    self.set_data :parameters, parameters
   end
   
   # to overide settings, only for specific cases or for testing
