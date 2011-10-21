@@ -1,21 +1,14 @@
 module  DomainToolsRequest
   class Request
+    attr_accessor :domain, :format, :service
 
     def initialize(data)
-       @username  = data[:username] if data[:username]
-       @key       = data[:key]      if data[:key]               
-       @domain    = data[:domain]   if data[:domain]
-       @service   = data[:service]  if data[:service]
-       @options   = data[:options]  if data[:options]
-       @format    = data[:format]   if data[:format]
-       @host      = data[:host]     if data[:host]
-       @port      = data[:port]     if data[:port]
-       @version   = data[:version]  if data[:version]
+      data.each{|key, value| set_data(key,value)}
     end
-                  
-    def format
-      @format
-    end       
+    
+    def sign(active)
+      @signed = active
+    end
     
     def done?
       return @done
@@ -37,33 +30,59 @@ module  DomainToolsRequest
     # build service url
     def build_url                 
       parts = []
+      uri   = ""
       parts << "/#{@version}"         if @version
       parts << "/#{@domain}"          if @domain
       parts << "/#{@service}"         if @service
+      uri   =  parts.join("")
       parts << "?"
       parts << "format=#{@format}"
-      parts << "&api_username=#{@username}&api_key=#{@key}"
+      parts << "&#{authentication_params(uri)}"
       parts << "&query=#{@query}"     if @query              
       parts << "#{@options}"          if @options
-      @url = parts.join("")                    
+      @url = parts.join("")                      
+      puts @url
+      @url
     end
+    
+    def authentication_params(uri)                                      
+      return "&api_username=#{@username}&api_key=#{@key}" unless @signed
+      timestamp = Time.now.utc.strftime("%Y-%m-%dT%H:%M:%SZ")
+      data      = @username+timestamp+uri                                             
+      digester  = OpenSSL::Digest::Digest.new(DomainTools::DIGEST)
+      signature = OpenSSL::HMAC.hexdigest(digester, @key, data)
+      ["api_username=#{@username}","signature=#{signature}","timestamp=#{timestamp}"].join("&")
+    end
+    
     
     def validate                                              
       raise DomainTools::NoDomainException unless @domain || @query
-      # must be a valid format (will be default TYPE constant if empty or wrong)
-      @format   = DomainTools::FORMAT   if @format!="json" && @format!="xml"
-      # if not set with "with" function, use default
-      @host     = DomainTools::HOST     if !@host
-      @port     = DomainTools::PORT     if !@port
-      @version  = DomainTools::VERSION  if !@version
+      # must be a valid format (will be default FORMAT constant if empty or wrong)
+      @format       = DomainTools::FORMAT     if @format!="json" && @format!="xml" && @format != "html"
+      # if not already defined, use default
+      @host         = DomainTools::HOST       if @host.nil?
+      @port         = DomainTools::PORT       if @port.nil?  
+      @signed       = DomainTools::SIGNED     if @signed.nil?
+      @version      = DomainTools::VERSION    if @version.nil?
     end
     
+    def do
+      execute
+    end      
+    
+    def do!
+      execute(true)
+    end
     
     # Connect to the server and execute the request
-    def do       
+    def execute(refresh=false)
+      return @response if @response && !refresh       
       validate     
       build_url                         
-      @done = true
+      @done = true      
+      puts "----------------------------------------------------------------------"
+      puts @host+@url 
+      puts "----------------------------------------------------------------------"      
       DomainTools.counter!
       begin
         Net::HTTP.start(@host) do |http|
@@ -76,7 +95,7 @@ module  DomainToolsRequest
         @error = DomainTools::Error.new(self,e)
         raise e.class.new(e)
       end
-    end  
+    end
     
     def response
       self.do
@@ -97,8 +116,7 @@ module  DomainToolsRequest
     end
     
     def content
-      return @http.body if @http.body
-      self.inspect
+      @http ? @http.body : nil
     end   
 
     # Response aliases
@@ -106,8 +124,13 @@ module  DomainToolsRequest
     def to_s
       return @response.to_s if @response
       self.do.to_s
+    end   
+    
+    def to_hash
+      return @response.to_hash if @response
+      self.do.to_hash
     end
-           
+    
     def to_json
       return @response.to_json if @response
       @format = "json"
@@ -135,6 +158,11 @@ module  DomainToolsRequest
       nil
     end
     
+    private 
+    
+    def set_data(key,val)
+      eval("@#{key.to_s} = val")
+    end
     
   end
 end

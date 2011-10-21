@@ -4,7 +4,7 @@ module DomainToolsResponse
     include DomainToolsJsonParser
     
     def initialize(request)
-      @request = request
+      @request = request.clone
     end                    
     
     def request
@@ -24,29 +24,36 @@ module DomainToolsResponse
     end
     
     def to_s
-      @request.content
-    end           
+      request.content
+    end             
+    
+    def render
+      to_s
+    end
+    
+    def to_hash
+      @parsed_object = parse unless @parsed_object
+      @parsed_object
+    end
                                                  
     # Return XML with parsed object (no new request made)
     def to_xml!
-      @parsed_object = parse unless @parsed_object
-      @parsed_object.to_xml({:root => 'whoisapi'})
+      self.to_hash.to_xml({:root => 'whoisapi'})
     end             
 
     # Execute the same request and return an XML response with a NEW request    
     def to_xml
-      @request.clone.to_xml
+      request.clone.to_xml
     end
                
     # Return JSON with parsed object (no new request made)
     def to_json!
-      @parsed_object = parse unless @parsed_object
-      @parsed_object.to_json
+      self.to_hash.to_json
     end        
 
     # Execute the same request and return a JSON response with a NEW request
     def to_json
-      @request.clone.to_json
+      request.clone.to_json
     end
     
     def to_yaml
@@ -63,8 +70,10 @@ module DomainToolsResponse
     private
     
     def parse
-      return XMLParser::parse(@request.content) if @request.format == "xml"
-      JSONParser::parse(@request.content)
+      return XMLParser::parse(request.content)        if request.format == "xml"
+      return JSONParser::parse(request.content)       if request.format == "json"   
+      # If HTML, we will fallback and make a new json request, then parse it
+      return JSONParser::parse(self.to_json.content)  if request.format == "html"
     end
     
   end

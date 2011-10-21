@@ -1,10 +1,7 @@
 module DomainTools              
   unloadable # development, to avoid reloading server at each change...
-  
   require 'net/http'
-  # HTTPS not supported yet
-  #require 'net/https'
-  
+    
   include DomainToolsUtil
   include DomainToolsExceptions
   include DomainToolsErrorParser  
@@ -13,13 +10,17 @@ module DomainTools
   include DomainToolsError
                        
   # Defaut HOST for the request
-  HOST    = "api.domaintools.com"
+  HOST      = "api.domaintools.com"
+  # Use Signed Authentication
+  SIGNED    = true              
+  # Digest method used for HMAC signature
+  DIGEST    = "sha256"
   # Default PORT for the request
-  PORT    = "80"
+  PORT      = "80"
   # Default VERSION for the request
-  VERSION = "v1"
+  VERSION   = "v1"
   # Default FORMAT for the request
-  FORMAT  = "json"      
+  FORMAT    = "json"      
     
   # Authentication of the user       
   # can be set with a hash {:username,:password} as one param
@@ -38,6 +39,10 @@ module DomainTools
   # Select which service must be called for this request
   def self.get(service)
     self.set_data :service, service
+  end             
+  
+  def self.sign(active)
+    self.set_data :signed, active
   end
   
   # change the format of the response (only XML or JSON)
@@ -51,10 +56,8 @@ module DomainTools
   end
   
   # to overide settings, only for specific cases or for testing
-  def self.with(settings={})                            
-    self.set_data(:host,    settings[:host])    if settings[:host]
-    self.set_data(:port,    settings[:port])    if settings[:port]
-    self.set_data(:version, settings[:version]) if settings[:version]
+  def self.with(settings={})                                      
+    settings.each{|key, value| set_data(key,value)}
     self
   end
   
@@ -78,17 +81,9 @@ module DomainTools
   end
   
   def self.request
-    @request = DomainToolsRequest::Request.new @data unless @request
+    raise DomainTools::NoSettingsException unless @request
     @request
   end
-  
-
-  
-  
-  
-  
-  
-  
   
 
        
@@ -124,6 +119,10 @@ module DomainTools
   
   def self.to_s
     self.request.to_s
+  end 
+  
+  def self.to_hash
+    self.request.to_hash
   end
   
   def self.to_json
@@ -152,6 +151,8 @@ module DomainTools
   def self.set_data(key,val)
     @data = {} unless @data
     @data[key.to_sym] = val
+    # Update data for future request
+    @request = DomainToolsRequest::Request.new @data
     self
   end
   

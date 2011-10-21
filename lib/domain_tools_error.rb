@@ -6,7 +6,7 @@ module DomainToolsError
       @exception = service_excepton
       parse
     end
-    
+
     def parse
       if @request.format=="xml"
         error = DomainTools::ErrorParser.from_xml(@request.content)
