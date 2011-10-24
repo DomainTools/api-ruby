@@ -1,4 +1,4 @@
-require "test/unit"                  
+require "test/unit"
 # ---------------------------------------------------------
 require "lib/domain_tools_json_parser"
 require "lib/domain_tools_xml_parser"
@@ -11,30 +11,29 @@ require "lib/domain_tools_util"
 require "domain_tools"
 # ---------------------------------------------------------
 begin
-  require "openssl" 
+  require "openssl"
 rescue LoadError
-  puts "Could not load 'openssl' gem, required for testing" 
+  puts "Could not load 'openssl' gem, required for testing"
   exit
 end
 begin
   require "json" 
 rescue LoadError
-  puts "Could not load 'json' gem, required for testing" 
+  puts "Could not load 'json' gem, required for testing"
   exit
 end
 # ---------------------------------------------------------
 
 class UnitTestDomainTools < Test::Unit::TestCase
-  
-  
+
+
   VALID_SETTINGS = {
     :username   => "username",
     :key        => "key",
     :format     => "json",
     :domain     => "domaintools.com"
   }
-  
-  
+
 
   # Exceptions tests
   # ---------------------------------------------------------------
@@ -44,9 +43,9 @@ class UnitTestDomainTools < Test::Unit::TestCase
       DomainTools.request
     end
   end
-  
+
   def test_raise_no_domain_exception_if_no_params
-    DomainTools.clear             
+    DomainTools.clear
     settings = VALID_SETTINGS.clone
     settings.delete(:domain)
     request = DomainTools::clear::with(settings).request
@@ -54,17 +53,17 @@ class UnitTestDomainTools < Test::Unit::TestCase
       request.do
     end
   end
-  
+
   def test_raise_no_credentials_exception
     DomainTools.clear
     request   = DomainTools::get("whois")::on("domaintools.com").request                      
     assert_raises DomainTools::NoCredentialsException do
       request.response
-    end               
+    end
   end
-  
+
   def test_nothing_raised_if_query_specified
-    DomainTools.clear             
+    DomainTools.clear
     settings = VALID_SETTINGS.clone
     settings.delete(:domain)
     settings[:query] = {"query" => "domain tools"}
@@ -73,9 +72,9 @@ class UnitTestDomainTools < Test::Unit::TestCase
       request.do
     end
   end
-  
+
   def test_nothing_raised_if_parameters_specified
-    DomainTools.clear             
+    DomainTools.clear
     settings = VALID_SETTINGS.clone
     settings.delete(:domain)
     settings[:parameters] = {"terms" => "DomainTools LLC|Seattle"}
@@ -84,25 +83,25 @@ class UnitTestDomainTools < Test::Unit::TestCase
       request.do
     end
   end
-  
-  
+
+
   # Classes tests
   # ---------------------------------------------------------------
   def test_module_class
     assert_equal DomainTools.class, Module
   end
-                                      
-  def test_module_request_class       
-    request = DomainTools::get("whois").request                  
+
+  def test_module_request_class
+    request = DomainTools::get("whois").request
     assert_equal request.class, DomainTools::Request
   end
-  
-  def test_module_response_class       
+
+  def test_module_response_class
     request   = DomainTools::with(VALID_SETTINGS)
     response  = request.response
     assert_equal response.class, DomainTools::Response
   end
-  
+
   # Parsers tests
   # ---------------------------------------------------------------
   def test_json_parser
@@ -112,7 +111,7 @@ class UnitTestDomainTools < Test::Unit::TestCase
       request.response["response"] # force parsing
     end
   end
-  
+
   def test_xml_parser
     request = DomainTools::clear::with(VALID_SETTINGS).request
     request.format = "xml"
@@ -120,7 +119,7 @@ class UnitTestDomainTools < Test::Unit::TestCase
       request.response["response"] # force parsing
     end
   end
-  
+
   # Formats tests
   # ---------------------------------------------------------------
   def test_format_as_xml
@@ -129,21 +128,21 @@ class UnitTestDomainTools < Test::Unit::TestCase
     request.do
     assert_equal request.format, "xml"
   end
-  
+
   def test_format_as_json
     request = DomainTools::clear::with(VALID_SETTINGS).request
     request.format = "json"
     request.do
     assert_equal request.format, "json"
   end
-  
+
   def test_format_as_html
     request = DomainTools::clear::with(VALID_SETTINGS).request
     request.format = "html"
     request.do
     assert_equal request.format, "html"
   end
-  
+
   def test_format_default_fallback_as_json
     request = DomainTools::clear::with(VALID_SETTINGS).request
     request.do
@@ -156,8 +155,5 @@ class UnitTestDomainTools < Test::Unit::TestCase
     request.do
     assert_equal request.format, "json"
   end
-
-  # Formats tests
-  # ---------------------------------------------------------------
 
 end
