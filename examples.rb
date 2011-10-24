@@ -38,7 +38,7 @@ response        = request.do
 # And even
 @example5       = DomainTools.do
 
-# 3. Browse an API response
+# 3. BROWSE AN API RESPONSE
 # ------------------------------------------------------------
 
 # 3.A The "do it yourself" way 
@@ -56,7 +56,7 @@ response        = request.response
 # ... see above to make a request ... 
 @example3       = request.do["response"]["registration"]["registrar"]
 
-# 4. Error handling
+# 4. ERROR HANDLING
 # ------------------------------------------------------------
 
 # 4.A When you execute a request, it can raise an exception, you need to be ready to catch it
@@ -75,7 +75,7 @@ rescue DomainTools::ServiceException => e
   end
 end
 
-# 5. Syntax & Format flexibility
+# 5. SYNTAX & FORMAT FLEXIBILITY
 # ------------------------------------------------------------
 
 # The idea behind this wrapper is to allow you to choose the syntax that feets your style.
