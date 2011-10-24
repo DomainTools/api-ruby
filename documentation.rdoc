@@ -1,0 +1,27 @@
+# DomainTools Wrapper Documentation
+  
+## DomainTools Module
+
+* DomainTools.use   (<String> username, <String> password)  # set
+* DomainTools.get   (<String> service)                      # set
+* DomainTools.as    (<String> format)                       # set
+* DomainTools.where (<String> parameters)                   # set
+* DomainTools.for   (<String> query)                        # set
+* DomainTools.with  (<Hash> settings)                       # set
+* DomainTools.sign  (<Boolean sign)                         # set
+* DomainTools.clear                                         # set
+* DomainTools.do                                            # Execute a request
+* DomainTools.response                                      # *do* alias
+* DomainTools.request                                       # get current request object
+
+## DomainTools Request
+(See DomainTools.request method to get a request object) 
+
+* request.sign      (<Boolean> sign)      # Enable/disable signed authentication (default:true)
+* request.done?                           # Return the request status (if *do* method as been called)
+* request.error?                          # True if an error has been raised
+* request.success?                        # True if no error has been raised
+* request.do                              # Execute the request (only once, if done?, then does nothing). Return a response object
+* request.do!                             # Execute the request (even if already done). Return a response object
+* request.error                           # Return error object if there is one
+* request.response                        # *do* alias
