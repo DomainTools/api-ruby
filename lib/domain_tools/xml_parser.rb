@@ -1,4 +1,4 @@
-module DomainToolsXmlParser
+module DomainTools
   class XMLParser          
     
     def self.parse(source)

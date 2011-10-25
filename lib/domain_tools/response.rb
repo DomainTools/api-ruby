@@ -1,7 +1,5 @@
-module DomainToolsResponse
-  class Response          
-    include DomainToolsXmlParser
-    include DomainToolsJsonParser
+module DomainTools
+  class Response
     
     def initialize(request)
       @request = request.clone

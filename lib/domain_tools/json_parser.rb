@@ -1,4 +1,4 @@
-module DomainToolsJsonParser
+module DomainTools
   class JSONParser          
                   
     def self.parse(source)

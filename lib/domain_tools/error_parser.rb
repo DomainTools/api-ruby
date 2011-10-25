@@ -1,7 +1,5 @@
-module DomainToolsErrorParser
+module DomainTools
   class ErrorParser
-    include DomainToolsXmlParser
-    include DomainToolsJsonParser
     
     def self.default_error
       {:code => 0, :message => "Unknown error message"}

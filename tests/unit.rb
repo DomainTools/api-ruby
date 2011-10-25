@@ -1,14 +1,5 @@
 require "test/unit"
-# ---------------------------------------------------------
-require "lib/domain_tools_json_parser"
-require "lib/domain_tools_xml_parser"
-require "lib/domain_tools_error"
-require "lib/domain_tools_error_parser"
-require "lib/domain_tools_exceptions"
-require "lib/domain_tools_request"
-require "lib/domain_tools_response"
-require "lib/domain_tools_util"
-require "domain_tools"
+require "lib/domain_tools"
 # ---------------------------------------------------------
 begin
   require "openssl"

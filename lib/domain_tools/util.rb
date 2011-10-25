@@ -1,4 +1,4 @@
-module DomainToolsUtil
+module DomainTools
   class Util
     
     # convert a Hash into inline string for GET params

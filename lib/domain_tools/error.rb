@@ -1,4 +1,4 @@
-module DomainToolsError
+module DomainTools
   class Error
     
     def initialize(request,service_excepton)

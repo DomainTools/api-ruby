@@ -1,6 +1,6 @@
-module  DomainToolsRequest
+module DomainTools
   class Request
-    attr_accessor :domain, :format, :service, :query, :parameters
+    attr_accessor :domain, :format, :service, :parameters
 
     def initialize(data)
       data.each{|key, value| set_data(key,value)}
@@ -37,8 +37,7 @@ module  DomainToolsRequest
       uri   =  parts.join("")
       parts << "?"
       parts << "format=#{@format}"
-      parts << "&#{authentication_params(uri)}"
-      parts << "&query=#{@query}"     if @query              
+      parts << "#{authentication_params(uri)}"
       parts << "#{format_parameters}" if @parameters
       @url = parts.join("")                      
     end
@@ -55,7 +54,7 @@ module  DomainToolsRequest
     
     
     def validate
-      raise DomainTools::NoDomainException unless @domain || @query || @parameters
+      raise DomainTools::NoDomainException unless @domain || @parameters
       raise DomainTools::NoCredentialsException unless @username || @key
       # must be a valid format (will be default FORMAT constant if empty or wrong)
       @format       = DomainTools::FORMAT     if @format!="json" && @format!="xml" && @format != "html"
@@ -81,6 +80,7 @@ module  DomainToolsRequest
       build_url                         
       @done = true
       DomainTools.counter!
+      require 'net/http'
       begin
         Net::HTTP.start(@host) do |http|
           req = Net::HTTP::Get.new(@url)          
@@ -105,7 +105,7 @@ module  DomainToolsRequest
     # Check HTTP request status and raise an exception if needed
     def validate_http_status    
       return true if @http.code.to_i == 200
-      DomainToolsExceptions::raise_by_code(@http.code)
+      DomainTools::Exceptions::raise_by_code(@http.code)
     end   
        
     def finalize                           
@@ -162,9 +162,11 @@ module  DomainToolsRequest
     end
     
     def format_parameters
-      return @parameters if @parameters.kind_of? String
-      return DomainTools::Util.vars_hash_to_string(@parameters) if @parameters.kind_of? Hash
-      ""
+      string = ""
+      string = @parameters if @parameters.kind_of? String
+      string = DomainTools::Util.vars_hash_to_string(@parameters) if @parameters.kind_of? Hash
+      string = "&#{string}" unless string.start_with?('&')
+      string
     end
     
   end
