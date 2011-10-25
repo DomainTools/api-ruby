@@ -15,8 +15,15 @@ module DomainToolsXmlParser
         node.elements.each{|subnode| val = self.parse_node(val,subnode)}
       else
         val = node.text
-      end 
-      hash[node.name] = val
+      end
+      if hash[node.name].kind_of?(Array)
+        hash[node.name] << val 
+      elsif !hash[node.name].nil?
+        tmp = hash[node.name]
+        hash[node.name] = [tmp,val]
+      else
+        hash[node.name] = val
+      end      
       hash
     end
     
