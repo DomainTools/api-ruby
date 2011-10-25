@@ -1,45 +1,41 @@
-# DomainTools Wrapper
-Ruby gem for requesting domaintools.com [webservices](http://www.domaintools.com/api/).
+= domaintoolsAPI Ruby Wrapper
 
-## API Documentation
-You can find [here](http://www.domaintools.com/api/docs/products/) the current list of services available with the DomainTools API
+== Presentation
 
-## How to use it
+The domaintoolsAPI Ruby Wrapper is a simple connector to access all webservices of [domaintools.com](http://domaintools.com "domaintools.com").
 
+== Getting started
 
-### Simple request example
+===1- Install DomainTools gem
 
+    gem install domaintools
+                           
+===2- Create a short ruby file and paste this code to do a simple whois on domaintools.com:
+                            
+    require('domaintools')
+    DOMAINTOOLS_USERNAME  = "your_username"
+    DOMAINTOOLS_KEY       = "your_key"
     DomainTools::use(DOMAINTOOLS_USERNAME,DOMAINTOOLS_KEY)::as("json")
-    request         = DomainTools.request
-    request.domain  = "domaintools.com"
-    response        = request.do
-    @json_result    = response.to_s
-    
-
-### Exceptions handling and response browsing
-    DomainTools::use(DOMAINTOOLS_USERNAME,DOMAINTOOLS_KEY)
     begin
-      request             = DomainTools.request                          
-      request.domain      = "domaintoolscom"
-      request.service     = "whois"
-      response            = request.do
-      @raw_response       = response            # json printed by defaut
-      @response_as_xml    = response.to_xml!    # parse and generate xml
-      @debug              = response.to_yaml    # useful for debug
-      @direct_browsing    = response["response"]["registration"]["registrar"]
-      @name_servers       = response["response"]["name_servers"]
-      @name_servers.each{|ns| puts ns}
+      request         = DomainTools.request
+      request.service = "whois"
+      request.domain  = "domaintools.com"
+      response        = request.do
+      puts response.to_s
     rescue DomainTools::ServiceException => e
       @error = "#{e.class}: #{request.error}" if request.error?
     end
-    
-### All inline request                 
-    begin
-      @raw_response = DomainTools::use(DOMAINTOOLS_USERNAME,DOMAINTOOLS_KEY)::get("wahois")::on("domaintools.com")["response"]["registrant"]
-    rescue DomainTools::ServiceException => e
-      # ... your error handling
+
+===3- Browse the response as a hash
+
+    if response.to_hash["response"].has_key?("registrant")
+      puts response.to_hash["response"]["registrant"]["name"]
     end
-    # Check status afterwards
-    @error = DomainTools.request.error? ? DomainTools.request.error : "No error"
-    
-*Numerous examples are available in the example file*
+
+===4- Documentation
+  
+See the *documentation.md* file 
+
+===5- Examples
+
+See *examples* folder
