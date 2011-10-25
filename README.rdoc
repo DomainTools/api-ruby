@@ -2,7 +2,7 @@
 
 == Presentation
 
-The domaintoolsAPI Ruby Wrapper is a simple connector to access all webservices of [domaintools.com](http://domaintools.com "domaintools.com").
+The domaintoolsAPI Ruby Wrapper is a simple connector to access all webservices of domaintools.com.
 
 == Getting started
 
