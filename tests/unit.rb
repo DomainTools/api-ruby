@@ -1,5 +1,5 @@
 require "test/unit"
-require "lib/domain_tools"
+require "domain_tools"
 # ---------------------------------------------------------
 begin
   require "openssl"
@@ -51,18 +51,7 @@ class UnitTestDomainTools < Test::Unit::TestCase
     assert_raises DomainTools::NoCredentialsException do
       request.response
     end
-  end
-
-  def test_nothing_raised_if_query_specified
-    DomainTools.clear
-    settings = VALID_SETTINGS.clone
-    settings.delete(:domain)
-    settings[:query] = {"query" => "domain tools"}
-    request = DomainTools::clear::with(settings).request
-    assert_nothing_raised do
-      request.do
-    end
-  end
+  end                             
 
   def test_nothing_raised_if_parameters_specified
     DomainTools.clear
@@ -74,8 +63,7 @@ class UnitTestDomainTools < Test::Unit::TestCase
       request.do
     end
   end
-
-
+  
   # Classes tests
   # ---------------------------------------------------------------
   def test_module_class
