@@ -1,6 +1,6 @@
-module DomainTools              
+DOMAIN_TOOLS_BASE_PATH = File.dirname(__FILE__)
 
-
+module DomainTools
 
   # Defaut HOST for the request
   HOST      = "api.domaintools.com"
@@ -15,14 +15,14 @@ module DomainTools
   # Default FORMAT for the request
   FORMAT    = "json"
   
-end                           
+end
 
-require "domain_tools/core"         # Core methods
-require "domain_tools/json_parser"  # JSON parser methods
-require "domain_tools/xml_parser"   # XML parser methods
-require "domain_tools/error"        # Error class
-require "domain_tools/error_parser" # Response error parser (JSON/XML)
-require "domain_tools/exceptions"   # Exceptions classes declaration
-require "domain_tools/request"      # Request class
-require "domain_tools/response"     # Response class
-require "domain_tools/util"         # Tools lib
+require "#{DOMAIN_TOOLS_BASE_PATH}/domain_tools/exceptions"   # Exceptions classes declaration
+require "#{DOMAIN_TOOLS_BASE_PATH}/domain_tools/json_parser"  # JSON parser methods
+require "#{DOMAIN_TOOLS_BASE_PATH}/domain_tools/xml_parser"   # XML parser methods
+require "#{DOMAIN_TOOLS_BASE_PATH}/domain_tools/error"        # Error class
+require "#{DOMAIN_TOOLS_BASE_PATH}/domain_tools/error_parser" # Response error parser (JSON/XML)
+require "#{DOMAIN_TOOLS_BASE_PATH}/domain_tools/request"      # Request class
+require "#{DOMAIN_TOOLS_BASE_PATH}/domain_tools/response"     # Response class
+require "#{DOMAIN_TOOLS_BASE_PATH}/domain_tools/util"         # Tools lib
+require "#{DOMAIN_TOOLS_BASE_PATH}/domain_tools/core"         # Core methods

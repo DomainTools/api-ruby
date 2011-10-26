@@ -8,7 +8,7 @@ The domaintoolsAPI Ruby Wrapper is a simple connector to access all webservices 
 
 ===1- Install DomainTools gem
 
-    gem install domaintools
+    gem install domain_tools
                            
 ===2- Create a short ruby file and paste this code to do a simple whois on domaintools.com:
                             

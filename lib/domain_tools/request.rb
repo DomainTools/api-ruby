@@ -37,9 +37,9 @@ module DomainTools
       uri   =  parts.join("")
       parts << "?"
       parts << "format=#{@format}"
-      parts << "#{authentication_params(uri)}"
+      parts << "&#{authentication_params(uri)}"
       parts << "#{format_parameters}" if @parameters
-      @url = parts.join("")                      
+      @url = parts.join("")
     end
     
     def authentication_params(uri)                                      
