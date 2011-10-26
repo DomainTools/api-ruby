@@ -12,7 +12,7 @@ The domaintoolsAPI Ruby Wrapper is a simple connector to access all webservices 
                            
 ===2- Create a short ruby file and paste this code to do a simple whois on domaintools.com:
                             
-    require('domaintools')
+    require('domain_tools')
     DOMAINTOOLS_USERNAME  = "your_username"
     DOMAINTOOLS_KEY       = "your_key"
     DomainTools::use(DOMAINTOOLS_USERNAME,DOMAINTOOLS_KEY)::as("json")
