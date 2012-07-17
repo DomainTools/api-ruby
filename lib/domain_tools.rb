@@ -4,6 +4,9 @@ module DomainTools
 
   # Defaut HOST for the request
   HOST      = "api.domaintools.com"
+  # HOST for the Free API
+  FREE_HOST = "freeapi.domaintools.com"
+  
   # Use Signed Authentication
   SIGNED    = true              
   # Digest method used for HMAC signature

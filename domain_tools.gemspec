@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name        = "domain_tools"
-  s.version     = "0.0.1"
+  s.version     = "0.0.2"
   s.author      = "DomainTools, LLC"
   s.email       = "MemberServices@DomainTools.com"
   s.homepage    = "http://www.domaintools.com/api/"

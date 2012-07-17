@@ -22,6 +22,11 @@ module DomainTools
     self
   end
   
+  # Change the host, to swith between free and standard API
+  def self.with_api(api)
+    self.set_data :api, api
+  end
+  
   # Select which service must be called for this request
   def self.get(service)
     self.set_data :service, service
@@ -93,7 +98,11 @@ module DomainTools
   
   def self.success?
     self.request.success?
-  end  
+  end
+  
+  def self.is_free?
+    self.request.is_free?
+  end
   
   def self.to_s
     self.request.to_s
@@ -127,6 +136,7 @@ module DomainTools
   
   def self.set_data(key,val)
     @data = {} unless @data
+    key = :host if key.to_s == 'api'
     @data[key.to_sym] = val
     # Update data for future request
     @request = DomainTools::Request.new @data

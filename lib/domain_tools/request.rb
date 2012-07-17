@@ -1,6 +1,6 @@
 module DomainTools
   class Request
-    attr_accessor :domain, :format, :service, :parameters
+    attr_accessor :username, :key, :domain, :format, :service, :parameters, :api
 
     def initialize(data)
       data.each{|key, value| set_data(key,value)}
@@ -42,10 +42,11 @@ module DomainTools
       @url = parts.join("")
     end
     
-    def authentication_params(uri)                                      
+    def authentication_params(uri)
+      return '' if is_free?
       return "&api_username=#{@username}&api_key=#{@key}" unless @signed
       timestamp = Time.now.utc.strftime("%Y-%m-%dT%H:%M:%SZ")
-      data      = @username+timestamp+uri                                             
+      data      = @username+timestamp+uri
       require 'openssl'
       digester  = OpenSSL::Digest::Digest.new(DomainTools::DIGEST)
       signature = OpenSSL::HMAC.hexdigest(digester, @key, data)
@@ -55,12 +56,12 @@ module DomainTools
     
     def validate
       raise DomainTools::NoDomainException unless @domain || @parameters
-      raise DomainTools::NoCredentialsException unless @username || @key
+      raise DomainTools::NoCredentialsException unless @username && @key
       # must be a valid format (will be default FORMAT constant if empty or wrong)
-      @format       = DomainTools::FORMAT     if @format!="json" && @format!="xml" && @format != "html"
+      @format       = DomainTools::FORMAT     unless ['json','xml','html'].include?(@format)
       # if not already defined, use default
       @host         = DomainTools::HOST       if @host.nil?
-      @port         = DomainTools::PORT       if @port.nil?  
+      @port         = DomainTools::PORT       if @port.nil?
       @signed       = DomainTools::SIGNED     if @signed.nil?
       @version      = DomainTools::VERSION    if @version.nil?
     end
@@ -103,7 +104,7 @@ module DomainTools
     end
        
     # Check HTTP request status and raise an exception if needed
-    def validate_http_status    
+    def validate_http_status
       return true if @http.code.to_i == 200
       DomainTools::Exceptions::raise_by_code(@http.code)
     end   
@@ -155,10 +156,22 @@ module DomainTools
       nil
     end
     
-    private 
+    def is_free?
+      @host==DomainTools::FREE_HOST
+    end
+    
+    def api=(api)
+      self.host = api
+    end
+    
+    def host=(h)
+      @host = ['freeapi','free'].include?(h.to_s) ? DomainTools::FREE_HOST : DomainTools::HOST
+    end
+    
+    private
     
     def set_data(key,val)
-      eval("@#{key.to_s} = val")
+      eval("self.#{key.to_s} = val")
     end
     
     def format_parameters
