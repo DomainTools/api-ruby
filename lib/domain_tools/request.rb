@@ -48,7 +48,7 @@ module DomainTools
       timestamp = Time.now.utc.strftime("%Y-%m-%dT%H:%M:%SZ")
       data      = @username+timestamp+uri
       require 'openssl'
-      digester  = OpenSSL::Digest::Digest.new(DomainTools::DIGEST)
+      digester  = OpenSSL::Digest.new(DomainTools::DIGEST)
       signature = OpenSSL::HMAC.hexdigest(digester, @key, data)
       ["api_username=#{@username}","signature=#{signature}","timestamp=#{timestamp}"].join("&")
     end
